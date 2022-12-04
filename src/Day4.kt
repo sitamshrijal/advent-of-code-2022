@@ -2,7 +2,7 @@ fun main() {
     fun parse(input: List<String>): List<Pair<IntRange, IntRange>> {
         return input.map {
             val (section1, section2) = it.split(",")
-            section1.toRange() to section2.toRange()
+            section1.toRange("-") to section2.toRange("-")
         }
     }
 
@@ -29,7 +29,7 @@ fun main() {
     println(part2(input))
 }
 
-fun String.toRange(): IntRange {
-    val splits = split("-").map { it.toInt() }
-    return splits[0]..splits[1]
+fun String.toRange(delimiter: String): IntRange {
+    val (start, end) = this.split(delimiter).map(String::toInt)
+    return start..end
 }
