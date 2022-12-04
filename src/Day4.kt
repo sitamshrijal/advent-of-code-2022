@@ -30,6 +30,6 @@ fun main() {
 }
 
 fun String.toRange(delimiter: String): IntRange {
-    val (start, end) = this.split(delimiter).map(String::toInt)
+    val (start, end) = split(delimiter).map(String::toInt)
     return start..end
 }
