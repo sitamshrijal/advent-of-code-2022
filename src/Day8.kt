@@ -20,7 +20,7 @@ fun main() {
         var count = 0
         for (i in 0 until rowSize) {
             for (j in 0 until columnSize) {
-                // All tress on the edge are visible
+                // All trees on the edge are visible
                 if (i == 0 || j == 0 || i == rowSize - 1 || j == columnSize - 1) {
                     count++
                 } else {
