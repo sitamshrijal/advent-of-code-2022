@@ -1,6 +1,6 @@
 fun main() {
     fun parse(input: List<String>): List<List<Tree>> {
-        val grid = mutableListOf<MutableList<Tree>>()
+        val grid = mutableListOf<List<Tree>>()
         input.forEach { row ->
             val list = mutableListOf<Tree>()
             row.forEach { column ->
@@ -8,67 +8,28 @@ fun main() {
             }
             grid += list
         }
+
+        for (i in grid.indices) {
+            for (j in grid[0].indices) {
+                val tree = grid[i][j]
+
+                tree.left = grid[i].take(j)
+                tree.right = grid[i].drop(j + 1)
+                tree.up = grid.map { it[j] }.take(i)
+                tree.down = grid.map { it[j] }.drop(i + 1)
+            }
+        }
         return grid
     }
 
     fun part1(input: List<String>): Int {
         val grid = parse(input)
-
-        val rowSize = grid.size
-        val columnSize = grid[0].size
-
-        var count = 0
-        for (i in 0 until rowSize) {
-            for (j in 0 until columnSize) {
-                // All trees on the edge are visible
-                if (i == 0 || j == 0 || i == rowSize - 1 || j == columnSize - 1) {
-                    count++
-                } else {
-                    val tree = grid[i][j]
-
-                    val left = grid[i].subList(0, j)
-                    val right = grid[i].subList(j + 1, columnSize)
-                    val up = grid.map { it[j] }.subList(0, i)
-                    val down = grid.map { it[j] }.subList(i + 1, rowSize)
-
-                    if (tree.isVisible(left) || tree.isVisible(right) || tree.isVisible(up) || tree.isVisible(
-                            down
-                        )
-                    ) {
-                        count++
-                    }
-                }
-            }
-        }
-        return count
+        return grid.flatten().count { it.isVisible() }
     }
 
     fun part2(input: List<String>): Int {
         val grid = parse(input)
-
-        val rowSize = grid.size
-        val columnSize = grid[0].size
-
-        val scenicScores = mutableListOf<Int>()
-        for (i in 0 until rowSize) {
-            for (j in 0 until columnSize) {
-                if (i == 0 || j == 0 || i == rowSize - 1 || j == columnSize - 1) {
-                    // Do nothing
-                } else {
-                    val tree = grid[i][j]
-
-                    val left = grid[i].subList(0, j).reversed()
-                    val right = grid[i].subList(j + 1, columnSize)
-                    val up = grid.map { it[j] }.subList(0, i).reversed()
-                    val down = grid.map { it[j] }.subList(i + 1, rowSize)
-
-                    scenicScores += tree.score(left) * tree.score(right) * tree.score(up) * tree.score(
-                        down
-                    )
-                }
-            }
-        }
-        return scenicScores.max()
+        return grid.flatten().maxOf { it.scenicScore() }
     }
 
     val input = readInput("input8")
@@ -77,9 +38,17 @@ fun main() {
 }
 
 data class Tree(val height: Int) {
-    fun isVisible(trees: List<Tree>): Boolean = trees.all { it.height < height }
+    var left = listOf<Tree>()
+    var right = listOf<Tree>()
+    var up = listOf<Tree>()
+    var down = listOf<Tree>()
 
-    fun score(trees: List<Tree>): Int {
+    fun isVisible(): Boolean =
+        isVisible(left) || isVisible(right) || isVisible(up) || isVisible(down)
+
+    private fun isVisible(trees: List<Tree>): Boolean = trees.all { it.height < height }
+
+    private fun score(trees: List<Tree>): Int {
         var score = 0
         for (tree in trees) {
             score++
@@ -89,4 +58,7 @@ data class Tree(val height: Int) {
         }
         return score
     }
+
+    fun scenicScore(): Int =
+        score(left.reversed()) * score(right) * score(up.reversed()) * score(down)
 }
