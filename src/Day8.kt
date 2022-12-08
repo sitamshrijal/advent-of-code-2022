@@ -1,12 +1,9 @@
 fun main() {
     fun parse(input: List<String>): List<List<Tree>> {
-        val grid = mutableListOf<List<Tree>>()
-        input.forEach { row ->
-            val list = mutableListOf<Tree>()
-            row.forEach { column ->
-                list += Tree(column.digitToInt())
+        val grid = buildList {
+            input.forEach { row ->
+                add(row.map { Tree(it.digitToInt()) })
             }
-            grid += list
         }
 
         for (i in grid.indices) {
