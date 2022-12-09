@@ -2,9 +2,9 @@ import kotlin.math.abs
 import kotlin.math.sign
 
 fun main() {
-    fun parse(input: List<String>): List<Pair<String, Int>> = input.map {
+    fun parse(input: List<String>): List<Pair<Direction, Int>> = input.map {
         val (direction, count) = it.split(" ")
-        direction to count.toInt()
+        Direction.parse(direction) to count.toInt()
     }
 
     fun part1(input: List<String>): Int {
@@ -17,53 +17,11 @@ fun main() {
 
         val visited = mutableListOf(tail)
         movements.forEach { (direction, count) ->
-            when (direction) {
-                "R" -> {
-                    repeat(count) {
-                        val x = head.x + 1
-                        val y = head.y
-                        head = Position(x, y)
-                        if (!tail.isNear(head)) {
-                            tail = tail.moveNear(head)
-                            visited += tail
-                        }
-                    }
-                }
-
-                "U" -> {
-                    repeat(count) {
-                        val x = head.x
-                        val y = head.y + 1
-                        head = Position(x, y)
-                        if (!tail.isNear(head)) {
-                            tail = tail.moveNear(head)
-                            visited += tail
-                        }
-                    }
-                }
-
-                "L" -> {
-                    repeat(count) {
-                        val x = head.x - 1
-                        val y = head.y
-                        head = Position(x, y)
-                        if (!tail.isNear(head)) {
-                            tail = tail.moveNear(head)
-                            visited += tail
-                        }
-                    }
-                }
-
-                "D" -> {
-                    repeat(count) {
-                        val x = head.x
-                        val y = head.y - 1
-                        head = Position(x, y)
-                        if (!tail.isNear(head)) {
-                            tail = tail.moveNear(head)
-                            visited += tail
-                        }
-                    }
+            repeat(count) {
+                head = head.move(direction)
+                if (!tail.isNear(head)) {
+                    tail = tail.moveNear(head)
+                    visited += tail
                 }
             }
         }
@@ -79,8 +37,18 @@ fun main() {
     println(part2(input))
 }
 
+enum class Direction(val dx: Int, val dy: Int) {
+    LEFT(-1, 0), RIGHT(1, 0), UP(0, 1), DOWN(0, -1);
+
+    companion object {
+        fun parse(string: String): Direction = values().find { it.name.startsWith(string) }!!
+    }
+}
+
 data class Position(val x: Int, val y: Int) {
     fun isNear(other: Position): Boolean = abs(x - other.x) <= 1 && abs(y - other.y) <= 1
+
+    fun move(direction: Direction): Position = Position(x + direction.dx, y + direction.dy)
 
     fun moveNear(other: Position): Position {
         val dx = x - other.x
