@@ -29,7 +29,31 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.size
+        val movements = parse(input)
+
+        // Starting position
+        val s = Position(0, 0)
+        val knots = MutableList(10) { s }
+
+        val visited = mutableListOf(s)
+        movements.forEach { (direction, count) ->
+            repeat(count) {
+                // Move the head
+                knots[0] = knots[0].move(direction)
+
+                (1..9).forEach { index ->
+                    val position = knots[index]
+                    val follow = knots[index - 1]
+                    if (!position.isNear(follow)) {
+                        knots[index] = position.moveNear(follow)
+                        if (index == 9) {
+                            visited += knots[9]
+                        }
+                    }
+                }
+            }
+        }
+        return visited.distinct().size
     }
 
     val input = readInput("input9")
