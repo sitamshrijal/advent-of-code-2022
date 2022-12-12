@@ -3,16 +3,16 @@ fun main() {
 
     fun signalStrength(instructions: List<Instruction>, cycle: Int): Int {
         var remaining = cycle
-        val executed = mutableListOf<Instruction>()
-
+        var X = 1
         for (instruction in instructions) {
             if (remaining <= instruction.cycles) {
                 break
             }
-            executed += instruction
+            if (instruction is Instruction.AddX) {
+                X += instruction.value
+            }
             remaining -= instruction.cycles
         }
-        val X = 1 + executed.filterIsInstance<Instruction.AddX>().sumOf { it.value }
         return X * cycle
     }
 
