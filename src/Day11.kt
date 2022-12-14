@@ -71,7 +71,7 @@ data class Monkey(
         fun parse(input: List<String>): Monkey {
             val items = mutableListOf<Item>()
 
-            val worryLevels = input[1].substringAfter("  Starting items: ")
+            val worryLevels = input[1].substringAfter("Starting items: ")
             worryLevels.split(", ").forEach {
                 items += Item(it.toLong())
             }
