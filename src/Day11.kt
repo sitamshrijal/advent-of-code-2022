@@ -95,14 +95,9 @@ data class Monkey(
                 else -> error("Not supported")
             }
 
-            val isDivisibleBy = input[3].substringAfter("  Test: divisible by ")
-            val test = isDivisibleBy.toLong()
-
-            val ifTrueText = input[4].substringAfter("    If true: throw to monkey ")
-            val ifTrue = ifTrueText.toInt()
-
-            val ifFalseText = input[5].substringAfter("    If false: throw to monkey ")
-            val ifFalse = ifFalseText.toInt()
+            val test = input[3].substringAfter("Test: divisible by ").toLong()
+            val ifTrue = input[4].substringAfter("If true: throw to monkey ").toInt()
+            val ifFalse = input[5].substringAfter("If false: throw to monkey ").toInt()
 
             return Monkey(items, operation, test, ifTrue, ifFalse)
         }
