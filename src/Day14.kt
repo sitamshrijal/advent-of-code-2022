@@ -1,9 +1,9 @@
 fun main() {
-    fun parse(input: List<String>): List<Position> {
+    fun parse(input: List<String>): List<CavePosition> {
         val rocks = input.flatMap {
             val splits = it.split(" -> ")
 
-            val list = mutableListOf<Position>()
+            val list = mutableListOf<CavePosition>()
 
             splits.zipWithNext().forEach { (start, end) ->
                 val x1 = start.substringBefore(",").toInt()
@@ -20,7 +20,7 @@ fun main() {
                         y1 downTo y2
                     }
                     range.forEach {
-                        list += Position(x1, it)
+                        list += CavePosition(x1, it)
                     }
                 }
                 // Horizontal
@@ -31,7 +31,7 @@ fun main() {
                         x1 downTo x2
                     }
                     range.forEach {
-                        list += Position(it, y1)
+                        list += CavePosition(it, y1)
                     }
                 }
             }
@@ -44,28 +44,24 @@ fun main() {
         val rocks = parse(input).toMutableList()
 
         // Starting position
-        var sand = Position(500, 0)
-        val maxY = rocks.maxBy { it.y }.y
+        var sand = CavePosition(500, 0)
+        val maxY = rocks.maxOf { it.y }
 
         var count = 0
 
         while (sand.y <= maxY) {
-            val canMoveDown = rocks.none { it.x == sand.x && it.y == sand.y + 1 }
-            val canMoveDownLeft = rocks.none { it.x == sand.x - 1 && it.y == sand.y + 1 }
-            val canMoveDownRight = rocks.none { it.x == sand.x + 1 && it.y == sand.y + 1 }
+            // The first position the sand can move to; null otherwise
+            val next =
+                listOf(sand.down(), sand.downLeft(), sand.downRight()).firstOrNull { it !in rocks }
 
-            if (canMoveDown) {
-                sand = sand.copy(y = sand.y + 1)
-            } else if (canMoveDownLeft) {
-                sand = sand.copy(x = sand.x - 1, y = sand.y + 1)
-            } else if (canMoveDownRight) {
-                sand = sand.copy(x = sand.x + 1, y = sand.y + 1)
+            if (next != null) {
+                sand = next
             } else {
                 rocks += sand
                 count++
 
                 // New unit of sand
-                sand = Position(500, 0)
+                sand = CavePosition(500, 0)
             }
         }
         return count
@@ -78,4 +74,12 @@ fun main() {
     val input = readInput("input14")
     println(part1(input))
     println(part2(input))
+}
+
+data class CavePosition(val x: Int, val y: Int) {
+    fun down(): CavePosition = CavePosition(x, y + 1)
+
+    fun downLeft(): CavePosition = CavePosition(x - 1, y + 1)
+
+    fun downRight(): CavePosition = CavePosition(x + 1, y + 1)
 }
