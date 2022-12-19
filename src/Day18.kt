@@ -31,7 +31,7 @@ fun main() {
                 if (it in cubes) {
                     count++
                 } else if (it.x in xRange && it.y in yRange && it.z in zRange) {
-                    queue.add(it)
+                    queue += it
                 }
             }
         }
