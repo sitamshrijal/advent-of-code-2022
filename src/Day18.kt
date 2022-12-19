@@ -20,16 +20,14 @@ fun main() {
 }
 
 data class Position3D(val x: Int, val y: Int, val z: Int) {
-    fun adjacentCubes(): List<Position3D> {
-        return listOf(
-            copy(x = x - 1),
-            copy(x = x + 1),
-            copy(y = y - 1),
-            copy(y = y + 1),
-            copy(z = z - 1),
-            copy(z = z + 1)
-        )
-    }
+    fun adjacentCubes(): List<Position3D> = listOf(
+        copy(x = x - 1),
+        copy(x = x + 1),
+        copy(y = y - 1),
+        copy(y = y + 1),
+        copy(z = z - 1),
+        copy(z = z + 1)
+    )
 
     companion object {
         fun parse(input: String): Position3D {
