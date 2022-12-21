@@ -5,9 +5,7 @@ fun main() {
     fun part1(input: List<String>): Int {
         val numbers = parse(input)
 
-        val indices = numbers.indices
-
-        indices.forEach { originalIndex ->
+        numbers.indices.forEach { originalIndex ->
             val index = numbers.indexOfFirst { it.index == originalIndex }
             val toMove = numbers.removeAt(index)
 
