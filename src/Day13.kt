@@ -19,8 +19,10 @@ fun main() {
         val divider1 = Packet.parse("[[2]]")
         val divider2 = Packet.parse("[[6]]")
 
-        val i = packets.count { it < divider1 } + 1
-        val j = packets.count { it < divider2 } + 2
+        val sorted = (packets + divider1 + divider2).sorted()
+
+        val i = sorted.indexOf(divider1) + 1
+        val j = sorted.indexOf(divider2) + 1
         return i * j
     }
 
