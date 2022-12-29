@@ -42,8 +42,12 @@ sealed interface Packet : Comparable<Packet> {
     data class ListPacket(val packets: List<Packet>) : Packet {
         override fun compareTo(other: Packet): Int = when (other) {
             is IntPacket -> compareTo(ListPacket(listOf(other)))
-            is ListPacket -> packets.zip(other.packets).map { it.first compareTo it.second }
-                .firstOrNull { it != 0 } ?: (packets.size compareTo other.packets.size)
+            is ListPacket -> {
+                val zipped = packets zip other.packets
+                val comparisons = zipped.map { it.first compareTo it.second }
+
+                comparisons.firstOrNull { it != 0 } ?: (packets.size compareTo other.packets.size)
+            }
         }
     }
 
