@@ -12,26 +12,12 @@ fun main() {
                 val x2 = end.substringBefore(",").toInt()
                 val y2 = end.substringAfter(",").toInt()
 
-                // Vertical
-                if (x1 == x2) {
-                    val range = if (y1 < y2) {
-                        y1..y2
-                    } else {
-                        y1 downTo y2
-                    }
-                    range.forEach {
-                        list += CavePosition(x1, it)
-                    }
-                }
-                // Horizontal
-                if (y1 == y2) {
-                    val range = if (x1 < x2) {
-                        x1..x2
-                    } else {
-                        x1 downTo x2
-                    }
-                    range.forEach {
-                        list += CavePosition(it, y1)
+                val xRange = minOf(x1, x2)..maxOf(x1, x2)
+                val yRange = minOf(y1, y2)..maxOf(y1, y2)
+
+                xRange.forEach { x ->
+                    yRange.forEach { y ->
+                        list += CavePosition(x, y)
                     }
                 }
             }
