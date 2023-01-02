@@ -44,13 +44,9 @@ fun main() {
     fun part1(input: List<String>): String {
         val (stacks, moves) = parse(input)
 
-        moves.forEach { move ->
-            repeat(move.count) {
-                val startStack = move.start
-                val endStack = move.end
-
-                val poppedChar = startStack.pop()
-                endStack.push(poppedChar)
+        moves.forEach { (start, end, count) ->
+            repeat(count) {
+                end.push(start.pop())
             }
         }
         return stacks.map { it.peek() }.joinToString(separator = "")
@@ -59,17 +55,15 @@ fun main() {
     fun part2(input: List<String>): String {
         val (stacks, moves) = parse(input)
 
-        moves.forEach { move ->
+        moves.forEach { (start, end, count) ->
             val toAdd = buildList {
-                repeat(move.count) {
-                    val startStack = move.start
-                    add(startStack.pop())
+                repeat(count) {
+                    add(start.pop())
                 }
             }
 
             toAdd.reversed().forEach {
-                val endStack = move.end
-                endStack.push(it)
+                end.push(it)
             }
         }
         return stacks.map { it.peek() }.joinToString(separator = "")
