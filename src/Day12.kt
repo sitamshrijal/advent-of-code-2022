@@ -68,7 +68,8 @@ fun main() {
             heightmap,
             start,
             { it.type == Type.END },
-            { from, to -> to.elevation - from.elevation <= 1 })
+            { from, to -> to.elevation - from.elevation <= 1 }
+        )
     }
 
     fun part2(input: List<String>): Int {
@@ -80,7 +81,8 @@ fun main() {
             heightmap,
             start,
             { it.elevation == 0 },
-            { from, to -> from.elevation - to.elevation <= 1 })
+            { from, to -> from.elevation - to.elevation <= 1 }
+        )
     }
 
     val input = readInput("input12")

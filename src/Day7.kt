@@ -24,7 +24,8 @@ fun main() {
 
                 it.startsWith("dir") -> {
                     current.directories += Directory(
-                        name = it.substringAfter("dir "), parent = current
+                        name = it.substringAfter("dir "),
+                        parent = current
                     )
                 }
 

@@ -20,7 +20,7 @@ fun main() {
  */
 fun Long.toSnafu(): String {
     var decimal = this // Input number
-    var snafu = ""  // Output number
+    var snafu = "" // Output number
     while (decimal != 0L) {
         when (val digit = decimal.mod(5L)) {
             in 0..2 -> snafu += digit
