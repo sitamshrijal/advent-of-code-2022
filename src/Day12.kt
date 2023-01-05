@@ -10,11 +10,14 @@ fun main() {
         }
     }
 
-    fun part1(input: List<String>): Int {
-        val heightmap = parse(input)
-
-        val xRange = input.indices
-        val yRange = input[0].indices
+    fun bfs(
+        heightmap: List<List<HillPosition>>,
+        start: HillPosition,
+        isGoal: (HillPosition) -> Boolean,
+        canMove: (HillPosition, HillPosition) -> Boolean
+    ): Int {
+        val xRange = heightmap.indices
+        val yRange = heightmap[0].indices
         val directions = listOf(-1 to 0, 1 to 0, 0 to 1, 0 to -1)
 
         heightmap.forEachIndexed { x, row ->
@@ -30,7 +33,6 @@ fun main() {
             }
         }
 
-        val start = heightmap.flatten().first { it.type == Type.START }
         val end = heightmap.flatten().first { it.type == Type.END }
 
         val queue = mutableListOf<HillPosition>()
@@ -38,8 +40,11 @@ fun main() {
 
         while (queue.isNotEmpty()) {
             val vertex = queue.removeFirst()
+            if (isGoal(vertex)) {
+                break
+            }
             vertex.adjacentPositions.forEach {
-                if (it.color == Color.WHITE && it.elevation - vertex.elevation <= 1) {
+                if (it.color == Color.WHITE && canMove(vertex, it)) {
                     it.color = Color.GRAY
                     it.distance = vertex.distance + 1
                     queue.add(it)
@@ -47,53 +52,35 @@ fun main() {
             }
             vertex.color = Color.BLACK
         }
-        return end.distance
+        return if (start.type == Type.END) {
+            heightmap.flatten().filter { it.elevation == 0 && it.distance != 0 }
+                .minOf { it.distance }
+        } else {
+            end.distance
+        }
+    }
+
+    fun part1(input: List<String>): Int {
+        val heightmap = parse(input)
+
+        val start = heightmap.flatten().first { it.type == Type.START }
+        return bfs(
+            heightmap,
+            start,
+            { it.type == Type.END },
+            { from, to -> to.elevation - from.elevation <= 1 })
     }
 
     fun part2(input: List<String>): Int {
         val heightmap = parse(input)
 
-        val xRange = input.indices
-        val yRange = input[0].indices
-        val directions = listOf(-1 to 0, 1 to 0, 0 to 1, 0 to -1)
-
-        heightmap.forEachIndexed { x, row ->
-            row.forEachIndexed { y, position ->
-                val adjacentList = mutableListOf<HillPosition>()
-
-                directions.forEach { (dx, dy) ->
-                    if (x + dx in xRange && y + dy in yRange) {
-                        adjacentList += heightmap[x + dx][y + dy]
-                    }
-                }
-                position.adjacentPositions = adjacentList
-            }
-        }
-
         // Start at the end
         val start = heightmap.flatten().first { it.type == Type.END }
-
-        val queue = mutableListOf<HillPosition>()
-        queue.add(start)
-
-        while (queue.isNotEmpty()) {
-            val vertex = queue.removeFirst()
-            if (vertex.elevation == 0) {
-                break
-            }
-            vertex.adjacentPositions.forEach {
-                if (it.color == Color.WHITE && vertex.elevation - it.elevation <= 1) {
-                    it.color = Color.GRAY
-                    it.distance = vertex.distance + 1
-                    queue.add(it)
-                }
-            }
-            vertex.color = Color.BLACK
-        }
-        return heightmap
-            .flatten()
-            .filter { it.elevation == 0 && it.distance != 0 }
-            .minOf { it.distance }
+        return bfs(
+            heightmap,
+            start,
+            { it.elevation == 0 },
+            { from, to -> from.elevation - to.elevation <= 1 })
     }
 
     val input = readInput("input12")
