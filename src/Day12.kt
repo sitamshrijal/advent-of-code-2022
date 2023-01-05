@@ -42,7 +42,6 @@ fun main() {
                 if (it.color == Color.WHITE && it.elevation - vertex.elevation <= 1) {
                     it.color = Color.GRAY
                     it.distance = vertex.distance + 1
-                    it.parent = vertex
                     queue.add(it)
                 }
             }
@@ -52,7 +51,49 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.size
+        val heightmap = parse(input)
+
+        val xRange = input.indices
+        val yRange = input[0].indices
+        val directions = listOf(-1 to 0, 1 to 0, 0 to 1, 0 to -1)
+
+        heightmap.forEachIndexed { x, row ->
+            row.forEachIndexed { y, position ->
+                val adjacentList = mutableListOf<HillPosition>()
+
+                directions.forEach { (dx, dy) ->
+                    if (x + dx in xRange && y + dy in yRange) {
+                        adjacentList += heightmap[x + dx][y + dy]
+                    }
+                }
+                position.adjacentPositions = adjacentList
+            }
+        }
+
+        // Start at the end
+        val start = heightmap.flatten().first { it.type == Type.END }
+
+        val queue = mutableListOf<HillPosition>()
+        queue.add(start)
+
+        while (queue.isNotEmpty()) {
+            val vertex = queue.removeFirst()
+            if (vertex.elevation == 0) {
+                break
+            }
+            vertex.adjacentPositions.forEach {
+                if (it.color == Color.WHITE && vertex.elevation - it.elevation <= 1) {
+                    it.color = Color.GRAY
+                    it.distance = vertex.distance + 1
+                    queue.add(it)
+                }
+            }
+            vertex.color = Color.BLACK
+        }
+        return heightmap
+            .flatten()
+            .filter { it.elevation == 0 && it.distance != 0 }
+            .minOf { it.distance }
     }
 
     val input = readInput("input12")
@@ -78,8 +119,7 @@ data class HillPosition(
     val elevation: Int,
     val type: Type,
     var color: Color = Color.WHITE,
-    var distance: Int = 0,
-    var parent: HillPosition? = null
+    var distance: Int = 0
 ) {
     var adjacentPositions = mutableListOf<HillPosition>()
 }
