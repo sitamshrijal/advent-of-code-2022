@@ -55,8 +55,8 @@ data class Position3D(val x: Int, val y: Int, val z: Int) {
 
     companion object {
         fun parse(input: String): Position3D {
-            val (x, y, z) = input.split(",")
-            return Position3D(x.toInt(), y.toInt(), z.toInt())
+            val (x, y, z) = input.split(",").map { it.toInt() }
+            return Position3D(x, y, z)
         }
     }
 }
