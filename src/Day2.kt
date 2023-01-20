@@ -1,18 +1,6 @@
 fun main() {
-    fun parse(input: List<String>): List<Game> {
-        val charMap = mapOf(
-            "A" to Move.ROCK,
-            "B" to Move.PAPER,
-            "C" to Move.SCISSORS,
-            "X" to Move.ROCK,
-            "Y" to Move.PAPER,
-            "Z" to Move.SCISSORS
-        )
-        val games = input.map {
-            val (opponent, you) = it.split(" ")
-            Game(charMap[opponent]!!, charMap[you]!!)
-        }
-        return games
+    fun parse(input: List<String>): List<Game> = input.map {
+        Game(Move.parse(it[0]), Move.parse(it[2]))
     }
 
     fun part1(input: List<String>): Int {
@@ -57,7 +45,16 @@ fun main() {
 }
 
 enum class Move(val score: Int) {
-    ROCK(1), PAPER(2), SCISSORS(3)
+    ROCK(1), PAPER(2), SCISSORS(3);
+
+    companion object {
+        fun parse(char: Char): Move = when (char) {
+            'A', 'X' -> ROCK
+            'B', 'Y' -> PAPER
+            'C', 'Z' -> SCISSORS
+            else -> error("Invalid char!")
+        }
+    }
 }
 
 data class Game(val opponent: Move, val you: Move) {
