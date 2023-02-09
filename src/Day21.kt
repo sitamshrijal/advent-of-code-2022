@@ -1,5 +1,5 @@
 fun main() {
-    fun parse(input: List<String>): MutableList<Job> = input.map { Job.parse(it) }.toMutableList()
+    fun parse(input: List<String>): List<Job> = input.map { Job.parse(it) }
 
     fun part1(input: List<String>): Long {
         val jobs = parse(input)
